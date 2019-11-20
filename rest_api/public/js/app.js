@@ -1839,6 +1839,7 @@ module.exports = {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _services_produtos__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../services/produtos */ "./resources/js/services/produtos.js");
+/* harmony import */ var _services_config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../services/config */ "./resources/js/services/config.js");
 //
 //
 //
@@ -1916,11 +1917,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   // props: { method: { default: 'POST' }},
   data: function data() {
     return {
       produto: {
+        id: '',
         name: '',
         description: '',
         price: ''
@@ -1948,17 +1951,52 @@ __webpack_require__.r(__webpack_exports__);
     salvar: function salvar() {
       var _this2 = this;
 
-      _services_produtos__WEBPACK_IMPORTED_MODULE_0__["default"].salvar(this.produto).then(function (resposta) {
-        _this2.produto = {};
-        alert('O produto Salvo com sucesso');
+      if (!this.produto.id) {
+        _services_produtos__WEBPACK_IMPORTED_MODULE_0__["default"].salvar(this.produto).then(function (resposta) {
+          console.log(resposta);
+          _this2.produto = {};
+          alert('O produto Salvo com sucesso');
 
-        _this2.listar();
+          _this2.listar();
 
-        _this2.errors = [];
-      })["catch"](function (e) {
-        console.log(e.response);
-        _this2.errors = '- Campo obrigatório'; //this.errors=e.response.data.errors
-      });
+          _this2.errors = [];
+        })["catch"](function (e) {
+          console.log(e.response);
+          _this2.errors = '- Campo obrigatório'; //this.errors=e.response.data.errors
+        });
+      } else {
+        _services_produtos__WEBPACK_IMPORTED_MODULE_0__["default"].atualizar(this.produto).then(function (resposta) {
+          console.log(resposta);
+          _this2.produto = {};
+          alert('O produto atualizado com sucesso');
+
+          _this2.listar();
+
+          _this2.errors = [];
+        })["catch"](function (e) {
+          console.log(e.response);
+          _this2.errors = '- Campo obrigatório';
+        });
+      }
+    },
+    editar: function editar(produto) {
+      this.produto = produto;
+    },
+    remover: function remover(produto) {
+      var _this3 = this;
+
+      if (confirm('Deseja excluir o produto?')) {
+        _services_produtos__WEBPACK_IMPORTED_MODULE_0__["default"].apagar(produto).then(function (resposta) {
+          console.log(resposta);
+
+          _this3.listar();
+
+          _this3.errors = [];
+        })["catch"](function (e) {
+          console.log(e.response);
+          _this3.errors = '- Campo obrigatório'; //this.errors=e.response.data.errors
+        });
+      }
     }
   }
 });
@@ -37284,8 +37322,7 @@ var render = function() {
       },
       [
         _c("label", [_vm._v("Nome")]),
-        _c("b", [_vm._v(_vm._s(_vm.errors))]),
-        _vm._v(" "),
+        _vm._v(_vm._s(_vm.errors) + "\n           "),
         _c("input", {
           directives: [
             {
@@ -37308,8 +37345,7 @@ var render = function() {
         }),
         _vm._v(" "),
         _c("label", [_vm._v("Descrição")]),
-        _c("b", [_vm._v(_vm._s(_vm.errors))]),
-        _vm._v(" "),
+        _vm._v(_vm._s(_vm.errors) + "\n          "),
         _c("textarea", {
           directives: [
             {
@@ -37332,8 +37368,7 @@ var render = function() {
         }),
         _vm._v(" "),
         _c("label", [_vm._v("Valor")]),
-        _c("b", [_vm._v(_vm._s(_vm.errors))]),
-        _vm._v(" "),
+        _vm._v(_vm._s(_vm.errors) + "\n          "),
         _c("input", {
           directives: [
             {
@@ -49769,6 +49804,12 @@ __webpack_require__.r(__webpack_exports__);
     return _config__WEBPACK_IMPORTED_MODULE_0__["http"].post('products', produto);
     /* .then((res) => console.log(res.data))
     .catch((err) => console.log(err)); */
+  },
+  atualizar: function atualizar(produto) {
+    return _config__WEBPACK_IMPORTED_MODULE_0__["http"].put('products/' + produto.id + '/', produto);
+  },
+  apagar: function apagar(produto) {
+    return _config__WEBPACK_IMPORTED_MODULE_0__["http"]["delete"]('products/' + produto.id);
   }
 });
 

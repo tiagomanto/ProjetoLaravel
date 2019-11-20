@@ -11,7 +11,16 @@ export default {
         /* .then((res) => console.log(res.data))
         .catch((err) => console.log(err)); */
         
-    }
+    },
+    atualizar:(produto) => {
+        return http.put('products/'+produto.id+'/',produto)
+        
+      },
+
+    apagar:(produto) => {
+        return http.delete('products/'+ produto.id)
+
+      }
 
 
 }

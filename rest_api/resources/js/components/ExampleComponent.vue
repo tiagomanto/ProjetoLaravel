@@ -25,13 +25,13 @@
               name="_method"
               /> -->
           
-          <label>Nome</label><b>{{errors}}</b>
+          <label>Nome</label>{{errors}}
            <input type="text" placeholder="Nome" v-model="produto.name" >
-          <label>Descrição</label><b>{{errors}}</b>
+          <label>Descrição</label>{{errors}}
           <textarea rows="50" placeholder="Descrição" v-model="produto.description">
           </textarea>
           <!-- <input type="text" placeholder="Descrição" v-model="produto.descricao" >-->
-          <label>Valor</label><b>{{errors}}</b>
+          <label>Valor</label>{{errors}}
           <input type="text" placeholder="Valor" v-model="produto.price" > 
 
           <button class="waves-effect waves-light btn-small">Salvar<i class="material-icons left">save</i></button>
@@ -77,6 +77,7 @@
 <script>
 
 import Produto from '../services/produtos' 
+import { http } from '../services/config'
 
     export default {
      // props: { method: { default: 'POST' }},
@@ -86,6 +87,7 @@ import Produto from '../services/produtos'
         return {          
           
           produto: {
+            id:'',
             name: '',
             description:'',
             price: ''
@@ -115,18 +117,56 @@ import Produto from '../services/produtos'
           },
 
           salvar(){
+            if (!this.produto.id){
+                
+                Produto.salvar(this.produto).then(resposta =>{
+                  console.log(resposta)
+                this.produto={}
+                alert('O produto Salvo com sucesso')
+                this.listar()
+                this.errors=[]
+              }).catch(e => {
+              console.log(e.response)
+              this.errors='- Campo obrigatório'
+              //this.errors=e.response.data.errors
+            })  
+            } else{
+                
+                Produto.atualizar(this.produto).then(resposta =>{
+                console.log(resposta)
+                this.produto={}
+                alert('O produto atualizado com sucesso')
+                
+                this.listar()
+                this.errors=[]
+              }).catch(e => {
+                console.log(e.response)
+                this.errors='- Campo obrigatório'
+              })
+
+            }
             
-            Produto.salvar(this.produto).then(resposta =>{
-             this.produto={}
-              alert('O produto Salvo com sucesso')
-              this.listar()
+          },
+          
+          editar(produto){
+            this.produto = produto
+
+          },
+
+          remover(produto){
+
+            if(confirm('Deseja excluir o produto?')){
+              Produto.apagar(produto).then(resposta =>{
+              console.log(resposta)
+              this.listar();
               this.errors=[]
             }).catch(e => {
               console.log(e.response)
               this.errors='- Campo obrigatório'
               //this.errors=e.response.data.errors
             })
-          }  
+            }
+          }
         }    
       }
 
