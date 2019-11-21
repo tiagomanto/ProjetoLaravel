@@ -17,15 +17,13 @@ class ProductController extends Controller
     private $product;
     public function __construct(Product $product)
     {
-        $this ->product = $product;
+        $this ->product = $product ;
     }
 
     public function index()
     {
-
-        return response()->json($this->product->paginate(5));
-        
-        
+        $products = $this->product->paginate(5) ;
+        return response()->json($products);
     }
 
     public function show($id)
@@ -49,22 +47,21 @@ class ProductController extends Controller
     } */
 
     public function store2(Request $request)
-{   $productData = $request ->all();
-    $validator = Validator::make($productData, [
+    {   
+        $productData = $request ->all();
+        $validator = Validator::make($productData, [
         'name' => 'required|unique:posts|max:255',
         'description' => 'required',
     ]);
 
-    $this->product->create($productData);
+        $this->product->create($productData);
 
-    if ($validator->fails()) {
-        return redirect('post/create')
-                    ->withErrors($validator)
-                    ->withInput();
+        if ($validator->fails()) {
+            return redirect('post/create')
+                        ->withErrors($validator)
+                        ->withInput();
+        }
     }
-}
-
-
 
     public function store(Request $request)
     {
@@ -121,16 +118,7 @@ class ProductController extends Controller
             return response()->json(ApiError::errorMessage('Houve um erro ao realizar a operação de remover',1012),500);
 
         }
-
         
     }
-    public function verbosrecurso()
-        {
-            return response()-> 
-            json([
-                'data'=> $this->product::all()
-            
-            ],200);
-           // return response()->json($this->product->paginate(5));
-        }
+    
 }

@@ -15,10 +15,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/lista', function () {
-    return view('lista');
-});
+Route::get('produtos/api', [
+    'as' => 'produtos.api',
+    'uses' => 'Api\ProductController@index'
+]); 
 
+Route::get('produtos', [
+    'as' => 'produtos.lista',
+    'uses' => 'ProdutoController@index'
+]); 
 
 Auth::routes();
 
